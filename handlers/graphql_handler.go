@@ -1,10 +1,12 @@
 package handlers
 
 import (
-    "log"
-    "net/http"
-    "music/graphql"
-    "github.com/graphql-go/handler"
+	"log"
+	"music/graphql"
+	"net/http"
+
+	"github.com/graphql-go/handler"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // StartGraphQLServer starts the GraphQL server on port 8080
