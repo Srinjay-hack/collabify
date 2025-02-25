@@ -1,34 +1,21 @@
-package database
+package config
 
 import (
-    "context"
-    "fmt"
-    "go.mongodb.org/mongo-driver/mongo"
-    "go.mongodb.org/mongo-driver/mongo/options"
+	"context"
+	"log"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var client *mongo.Client
+var Client *mongo.Client
 
-// Connect establishes a connection to MongoDB
-func Connect() (*mongo.Client, error) {
-    uri := "mongodb://localhost:27017"
-    clientOptions := options.Client().ApplyURI(uri)
-    var err error
-    client, err = mongo.Connect(context.Background(), clientOptions)
-    if err != nil {
-        return nil, err
-    }
-
-    err = client.Ping(context.Background(), nil)
-    if err != nil {
-        return nil, err
-    }
-
-    fmt.Println("Connected to MongoDB!")
-    return client, nil
-}
-
-// GetCollection returns a MongoDB collection
-func GetCollection(collectionName string) *mongo.Collection {
-    return client.Database("mydb").Collection(collectionName)
+// Connect to MongoDB
+func ConnectDB() {
+	var err error
+	Client, err = mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://127.0.0.1:27017"))
+	if err != nil {
+		log.Fatal("Error connecting to MongoDB:", err)
+	}
+	log.Println("Successfully connected to MongoDB")
 }
