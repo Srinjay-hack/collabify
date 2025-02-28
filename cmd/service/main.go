@@ -9,9 +9,14 @@ import (
 	"music/models"
 	"music/utils"
 	"net/http"
+	"path/filepath"
+
+	"os"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
+
+	"github.com/joho/godotenv"
 )
 
 // Initialize MongoDB
@@ -45,9 +50,19 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user.Password = hashedPassword
+	pwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	err = godotenv.Load(filepath.Join(pwd, "../../.env"))
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	dbName := os.Getenv("DATABASE_NAME")
 
 	// Store the user in the MongoDB
-	collection := config.Client.Database("myapp").Collection("users")
+	collection := config.Client.Database(dbName).Collection("users")
 	_, err = collection.InsertOne(context.Background(), user)
 	if err != nil {
 		http.Error(w, "Failed to register user", http.StatusInternalServerError)
@@ -66,8 +81,19 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	pwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	err = godotenv.Load(filepath.Join(pwd, "../../.env"))
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	dbName := os.Getenv("DATABASE_NAME")
+
 	// Fetch the user from the MongoDB
-	collection := config.Client.Database("myapp").Collection("users")
+	collection := config.Client.Database(dbName).Collection("users")
 	var storedUser models.User
 	err = collection.FindOne(context.Background(), bson.M{"email": user.Email}).Decode(&storedUser)
 	if err != nil {
