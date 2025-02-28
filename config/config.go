@@ -29,7 +29,6 @@ func InitMongoDB() {
 
 	dbURI := os.Getenv("DATABASE_URI")
 
-	//uri := "mongodb://localhost:27017/collabify" // Change this to your MongoDB URI
 	client, err := mongo.NewClient(options.Client().ApplyURI(dbURI))
 	if err != nil {
 		log.Fatal("Error creating MongoDB client:", err)
